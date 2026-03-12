@@ -48,7 +48,6 @@ import { Route as ApiTerminalResizeRouteImport } from './routes/api/terminal-res
 import { Route as ApiTerminalInputRouteImport } from './routes/api/terminal-input'
 import { Route as ApiTerminalCloseRouteImport } from './routes/api/terminal-close'
 import { Route as ApiSystemMetricsRouteImport } from './routes/api/system-metrics'
-import { Route as ApiStreamRouteImport } from './routes/api/stream'
 import { Route as ApiSkillsRouteImport } from './routes/api/skills'
 import { Route as ApiSessionsRouteImport } from './routes/api/sessions'
 import { Route as ApiSessionTitleRouteImport } from './routes/api/session-title'
@@ -314,11 +313,6 @@ const ApiTerminalCloseRoute = ApiTerminalCloseRouteImport.update({
 const ApiSystemMetricsRoute = ApiSystemMetricsRouteImport.update({
   id: '/api/system-metrics',
   path: '/api/system-metrics',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiStreamRoute = ApiStreamRouteImport.update({
-  id: '/api/stream',
-  path: '/api/stream',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSkillsRoute = ApiSkillsRouteImport.update({
@@ -744,7 +738,6 @@ export interface FileRoutesByFullPath {
   '/api/session-title': typeof ApiSessionTitleRoute
   '/api/sessions': typeof ApiSessionsRouteWithChildren
   '/api/skills': typeof ApiSkillsRoute
-  '/api/stream': typeof ApiStreamRoute
   '/api/system-metrics': typeof ApiSystemMetricsRoute
   '/api/terminal-close': typeof ApiTerminalCloseRoute
   '/api/terminal-input': typeof ApiTerminalInputRoute
@@ -856,7 +849,6 @@ export interface FileRoutesByTo {
   '/api/session-title': typeof ApiSessionTitleRoute
   '/api/sessions': typeof ApiSessionsRouteWithChildren
   '/api/skills': typeof ApiSkillsRoute
-  '/api/stream': typeof ApiStreamRoute
   '/api/system-metrics': typeof ApiSystemMetricsRoute
   '/api/terminal-close': typeof ApiTerminalCloseRoute
   '/api/terminal-input': typeof ApiTerminalInputRoute
@@ -970,7 +962,6 @@ export interface FileRoutesById {
   '/api/session-title': typeof ApiSessionTitleRoute
   '/api/sessions': typeof ApiSessionsRouteWithChildren
   '/api/skills': typeof ApiSkillsRoute
-  '/api/stream': typeof ApiStreamRoute
   '/api/system-metrics': typeof ApiSystemMetricsRoute
   '/api/terminal-close': typeof ApiTerminalCloseRoute
   '/api/terminal-input': typeof ApiTerminalInputRoute
@@ -1085,7 +1076,6 @@ export interface FileRouteTypes {
     | '/api/session-title'
     | '/api/sessions'
     | '/api/skills'
-    | '/api/stream'
     | '/api/system-metrics'
     | '/api/terminal-close'
     | '/api/terminal-input'
@@ -1197,7 +1187,6 @@ export interface FileRouteTypes {
     | '/api/session-title'
     | '/api/sessions'
     | '/api/skills'
-    | '/api/stream'
     | '/api/system-metrics'
     | '/api/terminal-close'
     | '/api/terminal-input'
@@ -1310,7 +1299,6 @@ export interface FileRouteTypes {
     | '/api/session-title'
     | '/api/sessions'
     | '/api/skills'
-    | '/api/stream'
     | '/api/system-metrics'
     | '/api/terminal-close'
     | '/api/terminal-input'
@@ -1424,7 +1412,6 @@ export interface RootRouteChildren {
   ApiSessionTitleRoute: typeof ApiSessionTitleRoute
   ApiSessionsRoute: typeof ApiSessionsRouteWithChildren
   ApiSkillsRoute: typeof ApiSkillsRoute
-  ApiStreamRoute: typeof ApiStreamRoute
   ApiSystemMetricsRoute: typeof ApiSystemMetricsRoute
   ApiTerminalCloseRoute: typeof ApiTerminalCloseRoute
   ApiTerminalInputRoute: typeof ApiTerminalInputRoute
@@ -1731,13 +1718,6 @@ declare module '@tanstack/react-router' {
       path: '/api/system-metrics'
       fullPath: '/api/system-metrics'
       preLoaderRoute: typeof ApiSystemMetricsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/stream': {
-      id: '/api/stream'
-      path: '/api/stream'
-      fullPath: '/api/stream'
-      preLoaderRoute: typeof ApiStreamRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/skills': {
@@ -2395,7 +2375,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSessionTitleRoute: ApiSessionTitleRoute,
   ApiSessionsRoute: ApiSessionsRouteWithChildren,
   ApiSkillsRoute: ApiSkillsRoute,
-  ApiStreamRoute: ApiStreamRoute,
   ApiSystemMetricsRoute: ApiSystemMetricsRoute,
   ApiTerminalCloseRoute: ApiTerminalCloseRoute,
   ApiTerminalInputRoute: ApiTerminalInputRoute,

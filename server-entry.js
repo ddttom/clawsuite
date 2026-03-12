@@ -2,6 +2,7 @@ import { createServer } from 'node:http'
 import { readFile, stat } from 'node:fs/promises'
 import { join, extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createConnection } from 'node:net'
 import server from './dist/server/server.js'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
@@ -136,6 +137,50 @@ const httpServer = createServer(async (req, res) => {
     res.writeHead(500)
     res.end('Internal Server Error')
   }
+})
+
+// WebSocket proxy: forward /ws-gateway upgrades to the OpenClaw gateway
+const GATEWAY_URL = process.env.CLAWDBOT_GATEWAY_URL?.trim() || 'ws://127.0.0.1:18789'
+const gwParsed = new URL(GATEWAY_URL.replace(/^ws/, 'http'))
+const GW_HOST = gwParsed.hostname || '127.0.0.1'
+const GW_PORT = parseInt(gwParsed.port || '18789', 10)
+
+httpServer.on('upgrade', (req, socket, head) => {
+  if (!req.url?.startsWith('/ws-gateway')) {
+    socket.destroy()
+    return
+  }
+
+  // Rewrite path: strip /ws-gateway prefix, default to /
+  const upstreamPath = req.url.replace(/^\/ws-gateway/, '') || '/'
+
+  const upstream = createConnection({ host: GW_HOST, port: GW_PORT }, () => {
+    // Rebuild the HTTP upgrade request for the upstream gateway
+    const headers = Object.entries(req.headers)
+      .filter(([k]) => k !== 'host')
+      .map(([k, v]) => `${k}: ${v}`)
+      .join('\r\n')
+
+    upstream.write(
+      `GET ${upstreamPath} HTTP/1.1\r\n` +
+      `Host: ${GW_HOST}:${GW_PORT}\r\n` +
+      `${headers}\r\n` +
+      `\r\n`
+    )
+
+    if (head.length) upstream.write(head)
+
+    // Bi-directional pipe
+    upstream.pipe(socket)
+    socket.pipe(upstream)
+  })
+
+  upstream.on('error', (err) => {
+    console.error('[ws-gateway proxy] upstream error:', err.message)
+    socket.destroy()
+  })
+
+  socket.on('error', () => upstream.destroy())
 })
 
 httpServer.listen(port, host, () => {
